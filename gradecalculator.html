@@ -4,21 +4,196 @@
 <meta charset="UTF-8">
 <title>Grade Calculator</title>
 <meta name="description" content="Grade calculator">
+
 </head>
 <body>
 
+<script type="text/javascript">
+var homework = 0;
+var exam1 = 0;
+var exam2 = 0;
+var exam3 = 0;
+
+var data={"grades" : [
+{
+	"letter" : "A",
+	"min" : 92,
+	"max" : 100
+},
+{
+	"letter" : "A-",
+	"min" : 90,
+	"max" : 91
+},
+{
+	"letter" : "B+",
+	"min" : 88,
+	"max" : 89
+},
+{
+	"letter" : "B",
+	"max" : 87,
+	"min" : 82
+},
+{
+	"letter" : "B-",
+	"max" : 81,
+	"min" : 80
+},
+{
+	"letter" : "C+",
+	"max" : 79,
+	"min" : 78
+},
+{
+	"letter" : "C",
+	"max" : 77,
+	"min" : 72
+},
+{
+	"letter" : "C-",
+	"max" : 71,
+	"min" : 70
+},
+{
+	"letter" : "D+",
+	"max" : 69,
+	"min" : 68
+},
+{
+	"letter" : "D",
+	"max" : 67,
+	"min" : 62
+},
+{
+	"letter" : "D-",
+	"max" : 61,
+	"min" : 60
+},
+{
+	"letter" : "F",
+	"max" : 60,
+	"min" : 0
+}],
+     "weights": [
+{
+        "name" : "homework",
+        "weight" : 0.3
+},
+{
+        "name" : "exam1",
+        "weight" : 0.15
+},
+{
+        "name" : "exam2",
+        "weight" : 0.15
+},
+{
+        "name" : "exam3",
+        "weight" : 0.15
+},
+{
+        "name" : "final",
+        "weight" : 0.25
+}]
+};
+
+function checkInput(e) {
+ var num = /[0-9]/.test(String.fromCharCode(e.charCode));
+ if (!num)
+    e.preventDefault();
+ //if (num < 0)
+ //   num = 0
+ //if (num > 100)
+ //   num = 100    
+}
+
+function writetable() {
+ homework = document.getElementById("homework").value;
+ exam1 = document.getElementById("exam1").value;
+ exam2 = document.getElementById("exam2").value;
+ exam3 = document.getElementById("exam3").value;
+ scores = [homework, exam1, exam2, exam3];
+ 
+ var output = "<br><p>Score required on final exam to achieve the following grade:</p>";
+ output += "<table><tr><th>Grade</th> <th>Low end</th> <th>High end</th></tr>";
+ for (var i in data.grades) {
+    var low  = data.grades[i].min;
+    var high = data.grades[i].max;
+    var scorehigh = data.grades[i].min;
+    var scorelow = data.grades[i].max;
+    for (var j in scores) {
+         low -= data.weights[j].weight * scores[j];
+         high -= data.weights[j].weight * scores[j];
+    }
+    low = low / data.weights[4].weight;
+    high = high / data.weights[4].weight;
+
+    low = (low < 0 || low > 100) ? "Not possible":Math.round(low * 10) / 10;
+    high = (high < 0 || high > 100) ? "Not possible":Math.round(high * 10) / 10; 
+
+    output+="<tr><td><b>" + data.grades[i].letter + "</b> (" + data.grades[i].min + "-" + data.grades[i].max + ")</td> <td>" + low + "</td> <td>" + high +"</td></tr>";
+ }
+ output += "</table>";
+ document.getElementById("resulttable").innerHTML = output;
+ 
+}
+
+function resettable() {
+ document.getElementById("resulttable").innerHTML = ""; 
+}
+
+</script>
+
+<p>
 <h1>Final grade calculator</h1>
+Limits:
+<ul>
+<li>Doesn't prohibit scores less than 0 or greater than 100</li>
+<li>Doesn't work in extreme situations, i.e. guaranteed As or Fs</li>
+</ul>
 
-<p>Homework (estimate): <p>
+<br>
 
-<p>Exam 1: </p>
+<form id="id">
+<table>
+<tr>
+  <td>Homework (estimate):</td>
+  <td><input type="text" id="homework" onkeypress="checkInput(event)"></td>
+</tr>
 
-<p>Exam 2: </p>
+<tr>
+  <td>Exam 1:</td>
+  <td><input type="text" id="exam1" onkeypress="checkInput(event)"></td>
+</tr>
 
-<p>Exam 3: </p>
+<tr>
+  <td>Exam 2:</td>
+  <td><input type="text" id="exam2" onkeypress="checkInput(event)"></td>
+</tr>
 
-<p>Select desired final exam grade </p>
+<tr>
+  <td>Exam 3:</td>
+  <td><input type="text" id="exam3" onkeypress="checkInput(event)"></td>
+</tr>
 
-<p>Percent needed on final exam to achieve: </p>
+</table>
+
+<table>
+<tr>
+  <td><input type="button" name="calculate" value="Calculate" onclick="writetable()"></td>
+  <td><input type="reset" name="clear" value="Reset" onclick="resettable()"></td>
+</tr>
+</table>
+
+</form>
+
+
+<div id="resulttable"></div>
+
+<br>
+<br>
+<hr>
+<p>Oliver Lyons, 2014</p>
 </body>
 </html>
